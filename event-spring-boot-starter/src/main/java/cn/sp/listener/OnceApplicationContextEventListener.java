@@ -121,7 +121,8 @@ public class OnceApplicationContextEventListener implements ApplicationListener,
                 }
                 Parameter parameter = method.getParameters()[0];
                 Class<?> eventClazz = parameter.getType();
-                EventListenerRegistration registration = new EventListenerRegistration(listenerClazz, method.getName(), myEventListener.async());
+                EventListenerRegistration registration = new EventListenerRegistration(listenerClazz, method.getName(),
+                        myEventListener.async(), value);
                 eventManager.registerListener(eventClazz, registration);
             }
         });

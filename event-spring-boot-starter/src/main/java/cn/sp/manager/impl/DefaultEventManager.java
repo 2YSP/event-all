@@ -8,9 +8,6 @@ import cn.sp.listener.EventListener;
 import cn.sp.manager.EventManager;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -29,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  * @author 2YSP
  * @date 2022/4/16 16:12
  */
-public class DefaultEventManager implements ApplicationContextAware, EventManager {
+public class DefaultEventManager implements EventManager {
     /**
      * 事件map
      */
@@ -38,8 +35,6 @@ public class DefaultEventManager implements ApplicationContextAware, EventManage
      * 事件监听器map,key:事件类型
      */
     private static Map<Class<?>, List<EventListenerRegistration>> listenerMap = new HashMap<>(64);
-
-    private static ApplicationContext applicationContext;
 
     /**
      * 事件执行线程池
@@ -109,12 +104,6 @@ public class DefaultEventManager implements ApplicationContextAware, EventManage
 
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        DefaultEventManager.applicationContext = applicationContext;
-    }
-
-
-    @Override
     public void registerListener(Class<?> eventClazz, EventListenerRegistration listenerRegistration) {
         if (listenerMap.containsKey(eventClazz)) {
             List<EventListenerRegistration> configList = listenerMap.get(eventClazz);
@@ -130,11 +119,12 @@ public class DefaultEventManager implements ApplicationContextAware, EventManage
         Class<?> eventClass = event.getClass();
         List<EventListenerRegistration> eventListenerRegistrations = listenerMap.get(eventClass);
         eventListenerRegistrations.forEach(config -> {
-            Object bean = applicationContext.getBean(config.getClazz());
+            Class<?> clazz = config.getClazz();
+            Object bean = config.getBean();
             Assert.notNull(bean, "the bean of event listener can not be null!");
             Method method = null;
             try {
-                method = bean.getClass().getMethod(config.getMethodName(), eventClass);
+                method = clazz.getMethod(config.getMethodName(), eventClass);
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
             }
