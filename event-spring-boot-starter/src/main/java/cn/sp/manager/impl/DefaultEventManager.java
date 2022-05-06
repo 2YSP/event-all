@@ -1,13 +1,13 @@
 package cn.sp.manager.impl;
 
 import cn.sp.annotation.AsyncExecute;
+import cn.sp.config.EventPoolManager;
 import cn.sp.domain.EventListenerRegistration;
 import cn.sp.domain.constant.EventConstants;
 import cn.sp.event.Event;
 import cn.sp.listener.EventListener;
 import cn.sp.manager.EventManager;
 import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -17,10 +17,6 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author 2YSP
@@ -35,13 +31,6 @@ public class DefaultEventManager implements EventManager {
      * 事件监听器map,key:事件类型
      */
     private static Map<Class<?>, List<EventListenerRegistration>> listenerMap = new HashMap<>(64);
-
-    /**
-     * 事件执行线程池
-     */
-    private static ExecutorService eventPool = new ThreadPoolExecutor(4,
-            8, 30L, TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(512), new ThreadFactoryBuilder().setNameFormat("event-pool-%d").build());
 
 
     /**
@@ -97,7 +86,7 @@ public class DefaultEventManager implements EventManager {
                 eventListener.onEvent(e);
             } else {
                 // 异步执行
-                eventPool.execute(() -> eventListener.onEvent(e));
+                EventPoolManager.INSTANCE.execute(() -> eventListener.onEvent(e));
             }
         });
     }
@@ -130,7 +119,7 @@ public class DefaultEventManager implements EventManager {
             }
             if (config.getAsync()) {
                 Method method2 = method;
-                eventPool.execute(() -> invoke(method2, bean, event));
+                EventPoolManager.INSTANCE.execute(() -> invoke(method2, bean, event));
             } else {
                 invoke(method, bean, event);
             }
