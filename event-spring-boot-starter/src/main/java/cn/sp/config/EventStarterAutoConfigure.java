@@ -1,8 +1,8 @@
 package cn.sp.config;
 
 import cn.sp.listener.OnceApplicationContextEventListener;
-import cn.sp.manager.EventManager;
-import cn.sp.manager.impl.DefaultEventManager;
+import cn.sp.manager.EventListenerManager;
+import cn.sp.manager.impl.DefaultEventListenerManager;
 import cn.sp.publisher.EventPublisher;
 import cn.sp.publisher.impl.DefaultEventPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +19,13 @@ import org.springframework.context.annotation.Configuration;
 public class EventStarterAutoConfigure {
 
     @Bean
-    public EventManager eventManager() {
-        return new DefaultEventManager();
+    public EventListenerManager eventListenerManager() {
+        return new DefaultEventListenerManager();
     }
 
     @Bean
-    public EventPublisher eventPublisher(@Autowired EventManager eventManager) {
-        return new DefaultEventPublisher(eventManager);
+    public EventPublisher eventPublisher(@Autowired EventListenerManager eventListenerManager) {
+        return new DefaultEventPublisher(eventListenerManager);
     }
 
     @Bean

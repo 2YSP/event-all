@@ -4,7 +4,7 @@ import cn.sp.annotation.MyEventListener;
 import cn.sp.domain.EventListenerRegistration;
 import cn.sp.domain.constant.EventConstants;
 import cn.sp.event.Event;
-import cn.sp.manager.EventManager;
+import cn.sp.manager.EventListenerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -32,7 +32,7 @@ public class OnceApplicationContextEventListener implements ApplicationListener,
 
     private static ApplicationContext applicationContext;
 
-    private static EventManager eventManager;
+    private static EventListenerManager eventListenerManager;
 
     private static Logger logger = LoggerFactory.getLogger(OnceApplicationContextEventListener.class);
 
@@ -49,7 +49,7 @@ public class OnceApplicationContextEventListener implements ApplicationListener,
     }
 
     private void onApplicationContextEvent(ApplicationContextEvent event) {
-        OnceApplicationContextEventListener.eventManager = applicationContext.getBean(EventManager.class);
+        OnceApplicationContextEventListener.eventListenerManager = applicationContext.getBean(EventListenerManager.class);
         logger.info("start to init event spring boot starter config...");
         initConfig();
         logger.info("init event spring boot starter config end.");
@@ -99,7 +99,7 @@ public class OnceApplicationContextEventListener implements ApplicationListener,
                     if (parameter.getType().getName().equals(Event.class.getName())) {
                         continue;
                     }
-                    eventManager.registerListener((Class<? extends Event>) parameter.getType(), value);
+                    eventListenerManager.registerListener((Class<? extends Event>) parameter.getType(), value);
                 }
             }
         });
@@ -123,7 +123,7 @@ public class OnceApplicationContextEventListener implements ApplicationListener,
                 Class<?> eventClazz = parameter.getType();
                 EventListenerRegistration registration = new EventListenerRegistration(listenerClazz, method.getName(),
                         myEventListener.async(), value);
-                eventManager.registerListener(eventClazz, registration);
+                eventListenerManager.registerListener(eventClazz, registration);
             }
         });
     }

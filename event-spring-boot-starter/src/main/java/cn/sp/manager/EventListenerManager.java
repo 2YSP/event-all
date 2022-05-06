@@ -10,7 +10,7 @@ import cn.sp.listener.EventListener;
  * @description:
  * @date 2022/05/05 15:26
  */
-public interface EventManager {
+public interface EventListenerManager {
 
 
     /**

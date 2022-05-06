@@ -6,7 +6,7 @@ import cn.sp.domain.EventListenerRegistration;
 import cn.sp.domain.constant.EventConstants;
 import cn.sp.event.Event;
 import cn.sp.listener.EventListener;
-import cn.sp.manager.EventManager;
+import cn.sp.manager.EventListenerManager;
 import com.google.common.collect.Lists;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
@@ -22,7 +22,7 @@ import java.util.Map;
  * @author 2YSP
  * @date 2022/4/16 16:12
  */
-public class DefaultEventManager implements EventManager {
+public class DefaultEventListenerManager implements EventListenerManager {
     /**
      * 事件map
      */

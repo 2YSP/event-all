@@ -1,7 +1,7 @@
 package cn.sp.publisher.impl;
 
 import cn.sp.event.Event;
-import cn.sp.manager.EventManager;
+import cn.sp.manager.EventListenerManager;
 import cn.sp.publisher.EventPublisher;
 
 /**
@@ -10,10 +10,10 @@ import cn.sp.publisher.EventPublisher;
  */
 public class DefaultEventPublisher implements EventPublisher {
 
-    private EventManager eventManager;
+    private EventListenerManager eventListenerManager;
 
-    public DefaultEventPublisher(EventManager eventManager) {
-        this.eventManager = eventManager;
+    public DefaultEventPublisher(EventListenerManager eventListenerManager) {
+        this.eventListenerManager = eventListenerManager;
     }
 
     /**
@@ -24,11 +24,11 @@ public class DefaultEventPublisher implements EventPublisher {
      */
     @Override
     public <E extends Event> void publish(E event) {
-        eventManager.notifyListener(event);
+        eventListenerManager.notifyListener(event);
     }
 
     @Override
     public void publish(Object event) {
-        eventManager.notifyListener(event);
+        eventListenerManager.notifyListener(event);
     }
 }
